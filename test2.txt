@@ -157,7 +157,7 @@ WIND_VALUE = [
 metadata {
 	definition (name: "test2", namespace: "test2", author: "SJH", cstHandler: true) {
 		capability "Air Conditioner Mode"
-        capability "Dust Sensor"
+		capability "Switch"
 
 
 	}
@@ -173,8 +173,13 @@ metadata {
             state "cool", action: "airConditionerMode.setAirConditionerMode"
         }
         
+		standardTile("switch", "device.switch", width: 2, height: 2, canChangeIcon: true) {
+			state "off", label: 'Off', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff", nextState: "on"
+			state "on", label: 'On', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#00A0DC", nextState: "off"
+		}
+        
         main "ACmode"
-        details (["ACmode"])
+        details (["switch" , "ACmode"])
 
 
 		// TODO: define your main and details tiles here
@@ -294,16 +299,22 @@ def setAirConditionerMode(mode) {
 	// TODO: handle 'setAirConditionerMode' command
 }
 
+def on(){
+    makeCommand('', '{"command":"Operation","ctrlKey":"basicCtrl","dataKey":"airState.operation","dataValue":' + 1 + '}')
+    sendEvent(name: "switch", value: "on")
+}
 
+def off(){
+    makeCommand('', '{"command":"Operation","ctrlKey":"basicCtrl","dataKey":"airState.operation","dataValue":' + 0 + '}')
+    sendEvent(name: "switch", value: "off")
+}
 
 
 def cool(){
-    makeCommand('', '{"command":"Operation","ctrlKey":"basicCtrl","dataKey":"airState.operation","dataValue":' + 1 + '}')
     makeCommand('', '{"command":"Set","ctrlKey":"basicCtrl","dataKey":"airState.opMode","dataValue":' + 0 + '}')
 }
 
 def dry(){
-    makeCommand('', '{"command":"Operation","ctrlKey":"basicCtrl","dataKey":"airState.operation","dataValue":' + 1 + '}')
     makeCommand('', '{"command":"Set","ctrlKey":"basicCtrl","dataKey":"airState.opMode","dataValue":' + 1 + '}')
 }
 
